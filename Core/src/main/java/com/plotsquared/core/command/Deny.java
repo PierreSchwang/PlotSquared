@@ -94,7 +94,7 @@ public class Deny extends SubCommand {
 
         int maxDenySize = Permissions.hasPermissionRange(player, Permission.PERMISSION_DENY, Settings.Limit.MAX_PLOTS);
         int size = plot.getDenied().size();
-        if (size > (maxDenySize - 1)) {
+        if (size >= maxDenySize) {
             player.sendMessage(
                     TranslatableCaption.of("members.plot_max_members_denied"),
                     Template.of("amount", String.valueOf(size))
@@ -157,7 +157,7 @@ public class Deny extends SubCommand {
 
     @Override
     public Collection<Command> tab(final PlotPlayer<?> player, final String[] args, final boolean space) {
-        return TabCompletions.completePlayers(String.join(",", args).trim(), Collections.emptyList());
+        return TabCompletions.completePlayers(player, String.join(",", args).trim(), Collections.emptyList());
     }
 
     private void handleKick(PlotPlayer<?> player, Plot plot) {
