@@ -50,6 +50,7 @@ import com.plotsquared.core.events.PlotFlagRemoveEvent;
 import com.plotsquared.core.events.PlotMergeEvent;
 import com.plotsquared.core.events.PlotRateEvent;
 import com.plotsquared.core.events.PlotUnlinkEvent;
+import com.plotsquared.core.events.PostPlotMergeEvent;
 import com.plotsquared.core.events.TeleportCause;
 import com.plotsquared.core.listener.PlayerBlockEventType;
 import com.plotsquared.core.location.Direction;
@@ -194,6 +195,12 @@ public class EventDispatcher {
 
     public PlotAutoMergeEvent callAutoMerge(Plot plot, List<PlotId> plots) {
         PlotAutoMergeEvent event = new PlotAutoMergeEvent(plot.getWorldName(), plot, plots);
+        callEvent(event);
+        return event;
+    }
+
+    public PostPlotMergeEvent callPostPlotMerge(Plot plot, PlotPlayer<?> player) {
+        PostPlotMergeEvent event = new PostPlotMergeEvent(plot.getWorldName(), plot, player);
         callEvent(event);
         return event;
     }

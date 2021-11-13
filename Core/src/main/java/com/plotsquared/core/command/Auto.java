@@ -356,7 +356,11 @@ public class Auto extends SubCommand {
                 );
                 return false;
             }
-            return plotarea.mergePlots(mergeEvent.getPlots(), true);
+            if (!plotarea.mergePlots(mergeEvent.getPlots(), true)) {
+                return false;
+            }
+            this.eventDispatcher.callPostPlotMerge(plots.get(0), player);
+            return true;
         }
         return true;
     }

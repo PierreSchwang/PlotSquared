@@ -272,6 +272,7 @@ public class Merge extends SubCommand {
                     );
                 }
                 player.sendMessage(TranslatableCaption.of("merge.success_merge"));
+                this.eventDispatcher.callPostPlotMerge(plot, player);
             };
             if (!force && hasConfirmation(player)) {
                 CmdConfirm.addPending(accepter, MINI_MESSAGE.serialize(MINI_MESSAGE

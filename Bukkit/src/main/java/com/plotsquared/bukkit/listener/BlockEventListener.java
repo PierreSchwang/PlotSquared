@@ -74,6 +74,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.TileState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Fireball;
@@ -343,6 +344,7 @@ public class BlockEventListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void blockDestroy(BlockBreakEvent event) {
+        System.out.println("BlockBreakEvent");
         Player player = event.getPlayer();
         Location location = BukkitUtil.adapt(event.getBlock().getLocation());
         PlotArea area = location.getPlotArea();
@@ -360,12 +362,14 @@ public class BlockEventListener implements Listener {
                             Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_GROUNDLEVEL))
                     );
                     event.setCancelled(true);
+                    fixUpBlock(event);
                     return;
                 }
             } else if ((location.getY() > area.getMaxBuildHeight() || location.getY() < area
                     .getMinBuildHeight()) && !Permissions
                     .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_BUILD_HEIGHT_LIMIT)) {
                 event.setCancelled(true);
+                fixUpBlock(event);
                 plotPlayer.sendMessage(
                         TranslatableCaption.of("height.height_limit"),
                         Template.of("minHeight", String.valueOf(area.getMinBuildHeight())),
@@ -376,6 +380,7 @@ public class BlockEventListener implements Listener {
                 if (!Permissions
                         .hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_DESTROY_UNOWNED, true)) {
                     event.setCancelled(true);
+                    fixUpBlock(event);
                 }
                 return;
             }
@@ -397,12 +402,14 @@ public class BlockEventListener implements Listener {
                         Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_OTHER))
                 );
                 event.setCancelled(true);
+                fixUpBlock(event);
             } else if (Settings.Done.RESTRICT_BUILDING && DoneFlag.isDone(plot)) {
                 if (!Permissions.hasPermission(plotPlayer, Permission.PERMISSION_ADMIN_BUILD_OTHER)) {
                     plotPlayer.sendMessage(
                             TranslatableCaption.of("done.building_restricted")
                     );
                     event.setCancelled(true);
+                    fixUpBlock(event);
                     return;
                 }
             }
@@ -418,11 +425,30 @@ public class BlockEventListener implements Listener {
                 return;
             }
         }
+        System.out.println("hello");
         pp.sendMessage(
                 TranslatableCaption.of("permission.no_permission_event"),
                 Template.of("node", String.valueOf(Permission.PERMISSION_ADMIN_DESTROY_ROAD))
         );
         event.setCancelled(true);
+        fixUpBlock(event);
+    }
+
+    /**
+     * Try to fix a cancelled destroy-block-action on tile entities.
+     * Tile entities seem to lose their attributes for the player on a cancelled block break.
+     *
+     * @param event The cancelled event.
+     */
+    private void fixUpBlock(BlockBreakEvent event) {
+        System.out.println("Fixup " + event.getBlock() + " with " + event.getBlock().getState());
+        if (event.getBlock().getState() instanceof TileState) {
+            System.out.println("Alr");
+            TaskManager.runTaskLater(
+                    () -> event.getPlayer().sendBlockChange(event.getBlock().getLocation(), event.getBlock().getBlockData()),
+                    TaskTime.ticks(5)
+            );
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

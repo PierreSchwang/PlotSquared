@@ -27,6 +27,7 @@ package com.plotsquared.core.plot;
 
 import com.google.inject.Inject;
 import com.plotsquared.core.PlotSquared;
+import com.plotsquared.core.command.Claim;
 import com.plotsquared.core.configuration.ConfigurationUtil;
 import com.plotsquared.core.configuration.Settings;
 import com.plotsquared.core.configuration.caption.Caption;
@@ -503,6 +504,7 @@ public final class PlotModificationManager {
                         return;
                     }
                     plot.getPlotModificationManager().autoMerge(event.getDir(), event.getMax(), uuid, player, true);
+                    PlotSquared.get().getEventDispatcher().callPostPlotMerge(plot, player);
                 }
             });
             return true;

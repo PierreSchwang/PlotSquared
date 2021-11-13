@@ -46,7 +46,7 @@ public final class PlotMergeEvent extends PlotPlayerEvent implements Cancellable
      * PlotMergeEvent: Called when plots are merged
      *
      * @param world  World in which the event occurred
-     * @param plot   Plot that was merged
+     * @param plot   Plot that will be merged
      * @param dir    The direction of the merge
      * @param max    Max merge size
      * @param player The player attempting the merge

@@ -215,6 +215,7 @@ public class Claim extends SubCommand {
                                     player,
                                     true
                             );
+                            Claim.this.eventDispatcher.callPostPlotMerge(plot, player);
                         }
                     }
                     return null;

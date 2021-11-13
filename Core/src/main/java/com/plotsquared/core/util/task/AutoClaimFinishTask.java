@@ -25,6 +25,7 @@
  */
 package com.plotsquared.core.util.task;
 
+import com.plotsquared.core.command.Claim;
 import com.plotsquared.core.configuration.caption.Templates;
 import com.plotsquared.core.configuration.caption.TranslatableCaption;
 import com.plotsquared.core.events.PlotMergeEvent;
@@ -78,6 +79,7 @@ public final class AutoClaimFinishTask implements Callable<Boolean> {
                 );
             } else {
                 plot.getPlotModificationManager().autoMerge(event.getDir(), event.getMax(), player.getUUID(), player, true);
+                this.eventDispatcher.callPostPlotMerge(plot, player);
             }
         }
         return true;
